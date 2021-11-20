@@ -25,6 +25,7 @@ import com.echdr.android.echdrapp.data.service.forms.EnrollmentFormService;
 import com.echdr.android.echdrapp.data.service.forms.RuleEngineService;
 import com.echdr.android.echdrapp.ui.base.ListActivity;
 import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormActivity;
+import com.echdr.android.echdrapp.ui.enrollment_form.EnrollmentFormModified;
 import com.echdr.android.echdrapp.ui.events.EventsActivity;
 
 import org.hisp.dhis.android.core.enrollment.Enrollment;
@@ -39,10 +40,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import io.reactivex.disposables.Disposable;
+import io.reactivex.processors.PublishProcessor;
 
 
 public class ChildDetailsActivity extends ListActivity {
 
+    private PublishProcessor<Boolean> engineInitialization;
     private String trackedEntityInstanceUid;
     private Disposable disposable;
     private EditText name;
@@ -72,6 +75,7 @@ public class ChildDetailsActivity extends ListActivity {
     private List<Option> optionList;
     
     private Button submitButton;
+    private Context context;
 
 
 
@@ -88,6 +92,14 @@ public class ChildDetailsActivity extends ListActivity {
     private ImageView stuntingEnrolled;
     private ImageView stuntingNotEnrolled;
     private String orgUnit;
+
+    protected String[] ethinicityArray;
+    protected String[] relationshipArray;
+    protected String[] highestEduLevelArray;
+    protected String[] sectorArray;
+    protected String[] occupationArray;
+
+
 
 
     private enum IntentExtra {
@@ -112,22 +124,23 @@ public class ChildDetailsActivity extends ListActivity {
         address = findViewById(R.id.address);
         birthWeight = findViewById(R.id.birthWeight);
         birthHeight = findViewById(R.id.birthHeight);
-        ethnicity = findViewById(R.id.ethnicity);
-        GN_Area = findViewById(R.id.GN_Area);
-        relationship = findViewById(R.id.relationship);
-        nic = findViewById(R.id.nic);
-        occupation = findViewById(R.id.occupation);
-        sector = findViewById(R.id.sector);
+        ethnicity = findViewById(R.id.Child_detils_page_ethnicity);
+        GN_Area = findViewById(R.id.Child_detils_page_GN_Area);
+        relationship = findViewById(R.id.Child_detils_page_relationship);
+        nic = findViewById(R.id.Child_detils_page_nic);
+        occupation = findViewById(R.id.Child_detils_page_occupation);
+        sector = findViewById(R.id.Child_detils_page_sector);
         highestEduLevel = findViewById(R.id.highestEduLevel);
         mother_name = findViewById(R.id.mother_name);
         mother_dob = findViewById(R.id.mother_dob);
         numberOfChildren = findViewById(R.id.numberOfChildren);
         caregiver_name = findViewById(R.id.caregiver_name);
         lPhone = findViewById(R.id.lPhone);
-        mNumber = findViewById(R.id.mNumber);
+        mNumber = findViewById(R.id.mPhone);
         edit_button = findViewById(R.id.edit_btn);
         submitButton = findViewById(R.id.submit);
 
+        context = this;
 
         overweightNotEnrolled = findViewById(R.id.NotEnOverWeight);
         overweightEnrolled = findViewById(R.id.EnOverWeight);
@@ -153,13 +166,15 @@ public class ChildDetailsActivity extends ListActivity {
             address.setText(getValueListener("D9aC5K6C6ne"));
             birthWeight.setText(getValueListener("Fs89NLB2FrA"));
             birthHeight.setText(getValueListener("LpvdWM4YuRq"));
-            setSpinner("NsoirMjYF2C", ethnicity);
+            //setSpinner("NsoirMjYF2C", ethnicity);
+
             GN_Area.setText(getValueListener("upQGjAHBjzu"));
-            setSpinner("PmA6WejlEg8", relationship);
+            //setSpinner("PmA6WejlEg8", relationship);
+
             nic.setText(getValueListener("Gzjb3fp9FSe"));
-            setSpinner("LOPHzLXYAgC", occupation);
-            setSpinner("Y0TxeTJlnjn", sector);
-            setSpinner("gigmQXuSnNy", highestEduLevel);
+            //setSpinner("LOPHzLXYAgC", occupation);
+            //setSpinner("Y0TxeTJlnjn", sector);
+            //setSpinner("gigmQXuSnNy", highestEduLevel);
             mother_name.setText(getValueListener("K7Fxa2wv2Rx"));
             mother_dob.setText(getValueListener("kYfIkz2M6En"));
             numberOfChildren.setText(getValueListener("Gy4bCBxNuo4"));
@@ -167,9 +182,61 @@ public class ChildDetailsActivity extends ListActivity {
             lPhone.setText(getValueListener("cpcMXDhQouL"));
             mNumber.setText(getValueListener("LYRf4eIUVuN"));
 
+            ethnicity.setSelection(
+                    getSpinnerSelection("b9CoAneYYys", ethinicityArray)
+            );
+            relationship.setSelection(
+                    getSpinnerSelection("ghN8XfnlU5V", relationshipArray)
+            );
+            occupation.setSelection(
+                    getSpinnerSelection("Srxv0vniOnf", occupationArray)
+            );
+            sector.setSelection(
+                    getSpinnerSelection("igjlkmMF81X", sectorArray)
+            );
+            highestEduLevel.setSelection(
+                    getSpinnerSelection("GMNSaaq4xST", highestEduLevelArray)
+            );
+
+
         }catch (Exception e){
             e.printStackTrace();
+
         }
+        ArrayAdapter<CharSequence> ethinicityadapter = ArrayAdapter.createFromResource(context,
+                R.array.ethnicity,
+                android.R.layout.simple_spinner_item);
+        ethinicityadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ethnicity.setAdapter(ethinicityadapter);
+        ethnicity.setOnItemSelectedListener(new EnrollmentTypeSpinnerClass());
+
+        ArrayAdapter<CharSequence> relationshipadapter = ArrayAdapter.createFromResource(context,
+                R.array.relationship,
+                android.R.layout.simple_spinner_item);
+        relationshipadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        relationship.setAdapter(relationshipadapter);
+        relationship.setOnItemSelectedListener(new EnrollmentTypeSpinnerClass());
+
+        ArrayAdapter<CharSequence> occupationadapter = ArrayAdapter.createFromResource(context,
+                R.array.occupation,
+                android.R.layout.simple_spinner_item);
+        occupationadapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        occupation.setAdapter(occupationadapter);
+        occupation.setOnItemSelectedListener(new EnrollmentTypeSpinnerClass());
+
+        ArrayAdapter<CharSequence> sectoradapter = ArrayAdapter.createFromResource(context,
+                R.array.sector,
+                android.R.layout.simple_spinner_item);
+        sectoradapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        sector.setAdapter(sectoradapter);
+        sector.setOnItemSelectedListener(new EnrollmentTypeSpinnerClass());
+
+        ArrayAdapter<CharSequence> eduLevel = ArrayAdapter.createFromResource(context,
+                R.array.highestEdu,
+                android.R.layout.simple_spinner_item);
+        eduLevel.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        highestEduLevel.setAdapter(eduLevel);
+        highestEduLevel.setOnItemSelectedListener(new EnrollmentTypeSpinnerClass());
 
         getEnrollment();
         EnrollToPrograms();
@@ -195,12 +262,12 @@ public class ChildDetailsActivity extends ListActivity {
             String addressChild = address.getText().toString();
             String birthHeightChild = birthHeight.getText().toString();
             String birthWeightChild = birthWeight.getText().toString();
-            String ethnicityChild = ethnicity.getSelectedItem().toString();
+            //String ethnicityChild = ethnicity.getSelectedItem().toString();
             String gnAreaChild = GN_Area.getText().toString();
-            String relationChild = relationship.getSelectedItem().toString();
+            //String relationChild = relationship.getSelectedItem().toString();
             String nationalId = nic.getText().toString();
-            String occupationChild = occupation.getSelectedItem().toString();
-            String sectorChild = sector.getSelectedItem().toString();
+            //String occupationChild = occupation.getSelectedItem().toString();
+            //String sectorChild = sector.getSelectedItem().toString();
             String highestEdu = highestEduLevel.getSelectedItem().toString();
             String momName = mother_name.getText().toString();
             String momDob = mother_dob.getText().toString();
@@ -213,12 +280,12 @@ public class ChildDetailsActivity extends ListActivity {
             saveDataElement("D9aC5K6C6ne", addressChild);
             saveDataElement("LpvdWM4YuRq", birthHeightChild);
             saveDataElement("Fs89NLB2FrA", birthWeightChild);
-            saveDataElement("b9CoAneYYys", ethnicityChild);
+            //saveDataElement("b9CoAneYYys", ethnicityChild);
             saveDataElement("upQGjAHBjzu", gnAreaChild);
-            saveDataElement("ghN8XfnlU5V", relationChild);
+            //saveDataElement("ghN8XfnlU5V", relationChild);
             saveDataElement("Gzjb3fp9FSe", nationalId);
-            saveDataElement("Srxv0vniOnf", occupationChild);
-            saveDataElement("igjlkmMF81X", sectorChild);
+            //saveDataElement("Srxv0vniOnf", occupationChild);
+            //saveDataElement("igjlkmMF81X", sectorChild);
             saveDataElement("GMNSaaq4xST", highestEdu);
             saveDataElement("K7Fxa2wv2Rx", momName);
             saveDataElement("kYfIkz2M6En", momDob);
@@ -227,6 +294,20 @@ public class ChildDetailsActivity extends ListActivity {
             saveDataElement("cpcMXDhQouL", landNumber);
             saveDataElement("LYRf4eIUVuN", mobileNumber);
 
+            saveDataElement("b9CoAneYYys",
+                    ethinicityArray[ethnicity.getSelectedItemPosition()]);
+            saveDataElement("ghN8XfnlU5V",
+                    relationshipArray[relationship.getSelectedItemPosition()]);
+            saveDataElement("Srxv0vniOnf",
+                    occupationArray[occupation.getSelectedItemPosition()]);
+            saveDataElement("Srxv0vniOnf",
+                    occupationArray[occupation.getSelectedItemPosition()]);
+            saveDataElement("igjlkmMF81X",
+                    sectorArray[sector.getSelectedItemPosition()]);
+            saveDataElement("GMNSaaq4xST",
+                    highestEduLevelArray[highestEduLevel.getSelectedItemPosition()]);
+
+
             finish();
 
 
@@ -234,7 +315,34 @@ public class ChildDetailsActivity extends ListActivity {
 
 
 
+    }
+    private int getSpinnerSelection(String dataElement, String [] array)
+    {
+        int itemPosition = -1;
+        String stringElement = getDataElement(dataElement);
+        for(int i =0; i<array.length; i++)
+        {
+            if(array[i].equals(stringElement))
+            {
+                itemPosition = i;
+            }
+        }
+        return itemPosition;
+    }
 
+    private String getDataElement(String dataElement) {
+        TrackedEntityAttributeValueObjectRepository valueRepository =
+                Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                        .value(
+                                trackedEntityInstanceUid,
+                                dataElement
+                                //getIntent().getStringExtra(EnrollmentFormModified.IntentExtra.TEI_UID.name()
+                                //)
+                        );
+        String currentValue = valueRepository.blockingExists() ?
+                valueRepository.blockingGet().value() : "";
+
+        return currentValue;
     }
 
     private String getValueListener(String dataElement) {
@@ -246,7 +354,7 @@ public class ChildDetailsActivity extends ListActivity {
 
             return currentValue;
     }
-
+/*
     private void setSpinner(String optionSetUid, Spinner spinnerName) {
         optionList = Sdk.d2().optionModule().options().byOptionSetUid().eq(optionSetUid).blockingGet();
         List<String> optionListNames = new ArrayList<>();
@@ -255,7 +363,55 @@ public class ChildDetailsActivity extends ListActivity {
 
     }
 
+ */
 
+    private void saveDataElement(String dataElement, String value){
+        TrackedEntityAttributeValueObjectRepository valueRepository;
+        try {
+            valueRepository = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                    .value(
+                            dataElement,
+                            trackedEntityInstanceUid
+                    );
+        }catch (Exception e)
+        {
+            //EnrollmentFormService.getInstance().init(
+            //Sdk.d2(),
+            //teiUid,
+            //"hM6Yt9FQL0n",
+            //getIntent().getStringExtra(EnrollmentFormModified.IntentExtra.OU_UID.name()));
+            valueRepository = Sdk.d2().trackedEntityModule().trackedEntityAttributeValues()
+                    .value(
+                            trackedEntityInstanceUid,
+                            //EnrollmentFormService.getInstance().getEnrollmentUid(),
+                            dataElement
+                    );
+        }
+
+        String currentValue = valueRepository.blockingExists() ?
+                valueRepository.blockingGet().value() : "";
+
+        if (currentValue == null)
+            currentValue = "";
+
+        try{
+            if(!isEmpty(value))
+            {
+                valueRepository.blockingSet(value);
+            }else
+            {
+                valueRepository.blockingDeleteIfExist();
+            }
+        } catch (D2Error d2Error) {
+            d2Error.printStackTrace();
+        }finally {
+            if (!value.equals(currentValue)) {
+                engineInitialization.onNext(true);
+            }
+        }
+    }
+
+/*
     private void saveDataElement(String dataElement, String value){
         TrackedEntityAttributeValueObjectRepository valueRepository = null;
         try {
@@ -287,6 +443,8 @@ public class ChildDetailsActivity extends ListActivity {
         }
         
     }
+
+ */
 
     private void getEnrollment(){
 
@@ -460,6 +618,19 @@ public class ChildDetailsActivity extends ListActivity {
         super.onDestroy();
         if (disposable != null) {
             disposable.dispose();
+        }
+    }
+
+    class EnrollmentTypeSpinnerClass implements AdapterView.OnItemSelectedListener {
+        @Override
+        public void onItemSelected(AdapterView<?> parent, View v, int position, long id) {
+            //Toast.makeText(v.getContext(), "Your choose :" +
+            //sexArray[position], Toast.LENGTH_SHORT).show();
+        }
+
+        @Override
+        public void onNothingSelected(AdapterView<?> parent) {
+
         }
     }
 

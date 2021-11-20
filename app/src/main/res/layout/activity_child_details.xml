@@ -305,7 +305,7 @@
                             android:textColorHint="@color/desc" />
 
                         <Spinner
-                            android:id="@+id/ethnicity"
+                            android:id="@+id/Child_detils_page_ethnicity"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5">
@@ -338,7 +338,7 @@
                             android:textColorHint="@color/desc" />
 
                         <EditText
-                            android:id="@+id/GN_Area"
+                            android:id="@+id/Child_detils_page_GN_Area"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5"
@@ -370,7 +370,7 @@
                             android:textColorHint="@color/desc" />
 
                         <Spinner
-                            android:id="@+id/relationship"
+                            android:id="@+id/Child_detils_page_relationship"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5">
@@ -402,7 +402,7 @@
                             android:textColorHint="@color/desc" />
 
                         <EditText
-                            android:id="@+id/nic"
+                            android:id="@+id/Child_detils_page_nic"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5"
@@ -434,7 +434,7 @@
                             android:textColorHint="@color/desc" />
 
                         <Spinner
-                            android:id="@+id/occupation"
+                            android:id="@+id/Child_detils_page_occupation"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5">
@@ -466,7 +466,7 @@
                             android:textColorHint="@color/desc" />
 
                         <Spinner
-                            android:id="@+id/sector"
+                            android:id="@+id/Child_detils_page_sector"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5">
@@ -703,7 +703,7 @@
                             android:textColorHint="@color/desc" />
 
                         <EditText
-                            android:id="@+id/mNumber"
+                            android:id="@+id/mPhone"
                             android:layout_width="0dp"
                             android:layout_height="match_parent"
                             android:layout_weight="0.5"
