@@ -20,6 +20,7 @@ import com.echdr.android.echdrapp.ui.event_form.AnthropometryActivityNew;
 import com.echdr.android.echdrapp.ui.event_form.EventFormActivity;
 import com.echdr.android.echdrapp.ui.event_form.OtherEvaluationActivity;
 import com.echdr.android.echdrapp.ui.event_form.OtherReasonForActivity;
+import com.echdr.android.echdrapp.ui.event_form.OtherReferredForInterventionActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightIntervensionActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightManagementActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightOutcomeActivity;
@@ -76,7 +77,7 @@ public class EventsActivity extends ListActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setUp(R.layout.activity_events, R.id.eventsRecyclerView);
+        setUp(R.layout.activity_events_new, R.id.eventsRecyclerView);
         selectedProgram = getIntent().getStringExtra(IntentExtra.PROGRAM.name());
         selectedChild = getIntent().getStringExtra(IntentExtra.TEI_ID.name());
         compositeDisposable = new CompositeDisposable();
@@ -205,6 +206,18 @@ public class EventsActivity extends ListActivity {
                                                                     Sdk.d2().organisationUnitModule().organisationUnits()
                                                                             .one().blockingGet().uid(),
                                                                     OtherReasonForActivity.FormType.CREATE,
+                                                                    selectedChild);
+                                                        }
+
+                                                        else if(stageSelected.equals("y2imfIjE4zt")) // other - referred for intervention
+                                                        {
+                                                            return OtherReferredForInterventionActivity.getFormActivityIntent(
+                                                                    EventsActivity.this,
+                                                                    eventUid,
+                                                                    selectedProgram,
+                                                                    Sdk.d2().organisationUnitModule().organisationUnits()
+                                                                            .one().blockingGet().uid(),
+                                                                    OtherReferredForInterventionActivity.FormType.CREATE,
                                                                     selectedChild);
                                                         }
 

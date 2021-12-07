@@ -333,7 +333,7 @@ public class DataValuesWHO {
         LineGraphSeries<DataPoint> weightforage_series = new LineGraphSeries<DataPoint>();
         for (int i = 0; i <= maxMonth; i++) {
             weightforage_series.appendData(
-                    new DataPoint(i, weightForAgeBoys.get(i)[pos]), true, 60);
+                    new DataPoint(i, weightForAgeBoys.get(i)[pos]), true, 60);  // earlier changed maxDataPoints from 60 to 260 (5 years)
         }
 
         weightforage_series.setColor(getColor(pos));
