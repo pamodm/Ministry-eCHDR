@@ -20,6 +20,7 @@ import com.echdr.android.echdrapp.ui.event_form.AnthropometryActivityNew;
 import com.echdr.android.echdrapp.ui.event_form.EventFormActivity;
 import com.echdr.android.echdrapp.ui.event_form.OtherEvaluationActivity;
 import com.echdr.android.echdrapp.ui.event_form.OtherReasonForActivity;
+import com.echdr.android.echdrapp.ui.event_form.OtherReferredForInterventionActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightIntervensionActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightManagementActivity;
 import com.echdr.android.echdrapp.ui.event_form.OverweightOutcomeActivity;
@@ -40,8 +41,10 @@ import org.hisp.dhis.android.core.maintenance.D2Error;
 import org.hisp.dhis.android.core.organisationunit.OrganisationUnit;
 import org.hisp.dhis.android.core.program.ProgramStageDataElement;
 import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValue;
+import org.hisp.dhis.android.core.trackedentity.TrackedEntityDataValueObjectRepository;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import static com.echdr.android.echdrapp.data.service.StyleBinderHelper.setBackgroundColor;
@@ -52,11 +55,33 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
     private final AppCompatActivity activity;
     private DataSource<?, Event> source;
     private String selectedChild;
+    private HashMap<String, String[]> programStageNames;
+
 
     public EventAdapter(AppCompatActivity activity, String selectedChild) {
         super(new DiffByIdItemCallback<>());
         this.activity = activity;
         this.selectedChild = selectedChild;
+
+
+        programStageNames = new HashMap<>();
+        programStageNames.put("pI5JAmTcjE4", new String[]{"Intervention"}); // age in months
+        programStageNames.put("iWycCg6C2gd", new String[]{"Reason for enrollment"}); //
+        programStageNames.put("O9FEeIYqGRH", new String[]{"Risk factor evaluation"});
+        programStageNames.put("y2imfIjE4zt", new String[]{"Referred for intervention"});
+        programStageNames.put("TC7YSoNEUag", new String[]{"Management"});
+        programStageNames.put("S4DegY3OjJv", new String[]{"Intervention"});
+        programStageNames.put("ctwLm9rn8gr", new String[]{"Outcome"});
+        programStageNames.put("iEylwjAa5Cq", new String[]{"Management"});
+        programStageNames.put("mjjxR9aGJ4P", new String[]{"Intervention"});
+        programStageNames.put("L4MJKSCcUof", new String[]{"Outcome"});
+        programStageNames.put("KN0o3H6x8IH", new String[]{"Indication for Thriposha"});
+        programStageNames.put("du2KnwyeL32", new String[]{"Interventions"}); // number of thriposha packets given
+        programStageNames.put("QKsx9TfOJ3m", new String[]{"Outcome"});
+        programStageNames.put("B8Jbdgg7Ut1", new String[]{"Management"});
+        programStageNames.put("YweAFncBjUm", new String[]{"Intervention"});
+        programStageNames.put("RtC4CcoEs4J", new String[]{"Outcome"});
+
     }
 
     @NonNull
@@ -70,12 +95,63 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
     public void onBindViewHolder(@NonNull ListItemWithSyncHolder holder, int position) {
         Event event = getItem(position);
         List<TrackedEntityDataValue> values = new ArrayList<>(event.trackedEntityDataValues());
+
+        /*
         holder.title.setText(orgUnit(event.organisationUnit()).displayName());
         holder.subtitle1.setText(valueAt(values, event.programStage()));
         holder.subtitle2.setText(optionCombo(event.attributeOptionCombo()).displayName());
         holder.rightText.setText(DateFormatHelper.formatDate(event.eventDate()));
         holder.icon.setImageResource(R.drawable.ic_programs_black_24dp);
         holder.delete.setVisibility(View.VISIBLE);
+         */
+        holder.title.setText(programStageNames.get(event.programStage())[0]);
+
+        /* selecting subtitle two */
+        String sub_two_data = "";
+        if(event.programStage().equals("pI5JAmTcjE4")) // anthropometry
+        {
+            sub_two_data = "Height :" + getDataElementFromEvent( "cDXlUgg1WiZ", event.uid())
+                    + "cm Weight " + String.valueOf(Float.parseFloat(
+                            getDataElementFromEvent("rBRI27lvfY5", event.uid() ))/1000)
+            + "kg";
+        }
+        else if(event.programStage().equals("iWycCg6C2gd")) //other - reason for enrollment
+        {
+            sub_two_data = "MAM: " + getDataElementFromEvent( "QNV3Qb2kjx8", event.uid())
+                           + " SAM: " + getDataElementFromEvent( "AOKp3oQPyYP", event.uid());
+        }
+        else if(event.programStage().equals("TC7YSoNEUag")) //obesity - management
+        {
+            sub_two_data = "Nutrition seen: "
+                    + getDataElementFromEvent( "FMJdAftRK7q", event.uid());
+        }
+        else if(event.programStage().equals("S4DegY3OjJv")) //obesity - Intervention
+        {
+            sub_two_data = "Nutrition councelling given: "
+                    + getDataElementFromEvent( "FMJdAftRK7q", event.uid());
+        }
+        else if(event.programStage().equals("du2KnwyeL32")) //supplementary - intervention
+        {
+            sub_two_data = "Num thriposha packets given: " +
+                    getDataElementFromEvent( "h9Sv7i87Ks1", event.uid());
+        }
+        else if(event.programStage().equals("iEylwjAa5Cq")) //stunting - Management
+        {
+            sub_two_data = "Paediatrician/ MO/Nutrition seen: " +
+                    getDataElementFromEvent( "KdN0rkDaYLD", event.uid());
+        }
+        else if(event.programStage().equals("mjjxR9aGJ4P")) //stunting - Intervention
+        {
+            sub_two_data = "IYCF/Nutrition counselling: " +
+                    getDataElementFromEvent( "Xpf2G3fhTUb", event.uid());
+        }
+        holder.subtitle2.setText(sub_two_data);
+
+        holder.subtitle1.setText(DateFormatHelper.formatDate(event.eventDate()));
+        //holder.rightText.setText(DateFormatHelper.formatDate(event.eventDate()));
+        holder.icon.setImageResource(R.drawable.ic_programs_black_24dp);
+        holder.delete.setVisibility(View.VISIBLE);
+
         holder.delete.setOnClickListener(view -> {
             try {
                 Sdk.d2().eventModule().events().uid(event.uid()).blockingDelete();
@@ -138,6 +214,19 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
                                 event.program(),
                                 event.organisationUnit(),
                                 OtherReasonForActivity.FormType.CHECK,
+                                selectedChild
+                        ), false
+                );
+            }
+            else if(event.programStage().equals("y2imfIjE4zt")) // other - intervention
+            {
+                ActivityStarter.startActivity(activity,
+                        OtherReferredForInterventionActivity.getFormActivityIntent(
+                                activity,
+                                event.uid(),
+                                event.program(),
+                                event.organisationUnit(),
+                                OtherReferredForInterventionActivity.FormType.CHECK,
                                 selectedChild
                         ), false
                 );
@@ -341,5 +430,21 @@ public class EventAdapter extends PagedListAdapter<Event, ListItemWithSyncHolder
     public void invalidateSource() {
         source.invalidate();
     }
+
+    private String getDataElementFromEvent(String dataElement, String captureEvent)
+    {
+        TrackedEntityDataValueObjectRepository valueRepository =
+                Sdk.d2().trackedEntityModule().trackedEntityDataValues()
+                        .value(
+                                captureEvent,
+                                dataElement
+                        );
+
+        String currentValue = valueRepository.blockingExists() ?
+                valueRepository.blockingGet().value() : "";
+
+        return currentValue;
+    }
+
 
 }
