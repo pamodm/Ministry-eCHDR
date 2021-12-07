@@ -453,14 +453,14 @@ public class AnthropometryActivityNew extends AppCompatActivity {
 
         if (sex.equals("Male")) {
             for (int i = 3; i > -1; i--) {
-                heightGraph.addSeries(d.heightForAgeBoysValues(i, 60));
-                weightGraph.addSeries(d.weightForAgeBoys(i, 60));
+                heightGraph.addSeries(d.heightForAgeBoysValues(i, 60));  // earlier changed from 60 to 260
+                weightGraph.addSeries(d.weightForAgeBoys(i, 60));        // earlier changed from 60 to 260
             }
 
         } else {
             for (int i = 3; i > -1; i--) {
-                heightGraph.addSeries(d.heightForAgeGirlsValues(i, 60));
-                weightGraph.addSeries(d.weightForAgeGirlsValues(i, 60));
+                heightGraph.addSeries(d.heightForAgeGirlsValues(i, 60));  // earlier changed from 60 to 260
+                weightGraph.addSeries(d.weightForAgeGirlsValues(i, 60));  // earlier changed from 60 to 260
             }
 
         }
@@ -468,10 +468,10 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         heightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
         weightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
 
-        heightGraph.getViewport().setMaxX(60);
+        heightGraph.getViewport().setMaxX(60); // earlier changed from 60 to 260
         heightGraph.getViewport().setMaxY(130);
 
-        weightGraph.getViewport().setMaxX(60);
+        weightGraph.getViewport().setMaxX(60); // changed from 60 to 260
         weightGraph.getViewport().setMaxY(30);
 
         // don't show anomalies ( might be redundant when zooming is enabled)
