@@ -721,11 +721,13 @@
             android:layout_width="fill_parent"
             android:layout_height="0dp"
             android:layout_weight="0.16"
-            android:orientation="vertical">
+            android:orientation="vertical"
+            android:weightSum="2">
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:background="@drawable/background_popup_card"
                 android:weightSum="2"
                 android:layout_marginVertical="5dp"
@@ -745,7 +747,7 @@
                     android:visibility="gone"
                     android:id="@+id/EnAntopo"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/registration"
@@ -755,17 +757,17 @@
                     android:visibility="gone"
                     android:id="@+id/EnSupplementary"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
-                    android:background="@drawable/supplementary"
-                    android:src="@drawable/supplementary" />
+                    android:background="@drawable/supplements"
+                    android:src="@drawable/supplements" />
 
                 <ImageView
                     android:visibility="gone"
                     android:id="@+id/EnTera"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:src="@drawable/feeding"/>
@@ -774,7 +776,7 @@
                     android:visibility="gone"
                     android:id="@+id/EnOverWeight"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/weighingscale"
@@ -785,7 +787,7 @@
                     android:visibility="gone"
                     android:id="@+id/EnStunting"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/stunting"
@@ -795,7 +797,7 @@
                     android:visibility="gone"
                     android:id="@+id/EnOtherHealth"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/other_health"
@@ -805,7 +807,8 @@
 
             <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
+                android:layout_height="0dp"
+                android:layout_weight="1"
                 android:weightSum="2"
                 android:layout_marginVertical="5dp"
                 android:background="@drawable/background_popup_card"
@@ -824,7 +827,7 @@
                     android:visibility="visible"
                     android:id="@+id/NotEnAntopo"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/registration"
@@ -834,17 +837,17 @@
                     android:visibility="visible"
                     android:id="@+id/NotEnSupplementary"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
-                    android:background="@drawable/supplementary"
-                    android:src="@drawable/supplementary" />
+                    android:background="@drawable/supplements"
+                    android:src="@drawable/supplements" />
 
                 <ImageView
                     android:visibility="visible"
                     android:id="@+id/NotEnTera"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:src="@drawable/feeding"/>
@@ -853,7 +856,7 @@
                     android:visibility="visible"
                     android:id="@+id/NotEnOverWeight"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/weighingscale"
@@ -864,7 +867,7 @@
                     android:visibility="visible"
                     android:id="@+id/NotEnStunting"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/stunting"
@@ -874,7 +877,7 @@
                     android:visibility="visible"
                     android:id="@+id/NotEnOtherHealth"
                     android:layout_width="0dp"
-                    android:layout_height="wrap_content"
+                    android:layout_height="match_parent"
                     android:layout_gravity="center_vertical"
                     android:layout_weight="0.2"
                     android:background="@drawable/other_health"
@@ -914,6 +917,8 @@
             android:orientation="vertical"
             android:paddingTop="30dp">
 
+
+
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -948,8 +953,9 @@
                     android:id="@+id/edit_btn"
                     android:layout_width="36dp"
                     android:layout_height="36dp"
-                    android:layout_alignParentStart="true"
                     android:layout_marginStart="327dp"
+                    android:layout_toEndOf="@+id/title"
+
                     android:background="@drawable/edit"
                     android:clickable="true"
                     android:focusable="true"

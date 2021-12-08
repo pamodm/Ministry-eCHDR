@@ -43,9 +43,7 @@ public class OtherEvaluationActivity extends AppCompatActivity {
     private TextView textView_Date;
     private CheckBox checkbox_Food_Insecurity;
     private CheckBox checkbox_Inadequate_Water;
-    private CheckBox checkbox_Inadequate_child;
     private CheckBox checkbox_Poor_Income;
-    private CheckBox checkbox_Communicable_diseases;
 
     private Button saveButton;
     private ImageView datePicker;
@@ -85,8 +83,6 @@ public class OtherEvaluationActivity extends AppCompatActivity {
         checkbox_Poor_Income  = findViewById(R.id.Poor_income_Checkbox);
         checkbox_Food_Insecurity = findViewById(R.id.Food_insecurity_Checkbox);
         checkbox_Inadequate_Water  = findViewById(R.id.Inadequate_water_Checkbox);
-        checkbox_Inadequate_child = findViewById(R.id.Inadequate_child_Checkbox);
-        checkbox_Communicable_diseases = findViewById(R.id.Communicable_diseases_Checkbox);
         saveButton         = findViewById(R.id.otherEvaluationSave);
 
         context = this;
@@ -196,30 +192,6 @@ public class OtherEvaluationActivity extends AppCompatActivity {
             catch (Exception e)
             {
                 checkbox_Inadequate_Water.setChecked(false);
-            }
-
-            // set inadequate child care
-            try{
-                if(getDataElement("nXJSGsaPznl").equals("true"))
-                {
-                    checkbox_Inadequate_child.setChecked(true);
-                }
-            }
-            catch (Exception e)
-            {
-                checkbox_Inadequate_child.setChecked(false);
-            }
-
-            // set communicable disease
-            try{
-                if(getDataElement("Zr5SvpMT2y0").equals("true"))
-                {
-                    checkbox_Communicable_diseases.setChecked(true);
-                }
-            }
-            catch (Exception e)
-            {
-                checkbox_Communicable_diseases.setChecked(false);
             }
 
 
@@ -367,8 +339,6 @@ public class OtherEvaluationActivity extends AppCompatActivity {
 
         saveDataElement("cmqwQ5zk66F", textView_Date.getText().toString());
         saveDataElement("cLNSXKlqjqA", checkbox_Food_Insecurity.isChecked() ? "true" : "");
-        saveDataElement("Zr5SvpMT2y0", checkbox_Communicable_diseases.isChecked() ? "true" : "");
-        saveDataElement("nXJSGsaPznl", checkbox_Inadequate_child.isChecked() ? "true" : "");
         saveDataElement("r1YtZtTBbKZ", checkbox_Inadequate_Water.isChecked() ? "true" : "");
         saveDataElement("riZnnab24ef", checkbox_Poor_Income.isChecked() ? "true" : "");
 
