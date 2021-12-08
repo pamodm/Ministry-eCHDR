@@ -60,6 +60,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
     private FormType formType;
     private GraphView heightGraph;
     private GraphView weightGraph;
+    private GraphView weightForHeightGraph;
     private String selectedChild;
     private String sex;
     private TextView textView_Date;
@@ -75,11 +76,21 @@ public class AnthropometryActivityNew extends AppCompatActivity {
     private Button plotGraphButton;
     private TrackedEntityAttributeValue birthday;
 
+    private int currentAge;
+    private String Currentweight;
+
     Map<Integer, Integer> heightValues;
     Map<Integer, Integer> weightValues;
 
     Map<Integer, double[]> heightDataWHO;
     Map<Integer, double[]> weightDataWHO;
+
+    //weight for height
+    Map<Integer, Integer> weightForHeightValues0to2;
+    Map<Integer, Integer> weightForHeightValues2to5;
+
+    Map<Integer, double[]> weightForHeight0to2DataWHO;
+    Map<Integer, double[]> weightForHeight2to5DataWHO;
 
     private enum IntentExtra {
         EVENT_UID, PROGRAM_UID, OU_UID, TYPE, TEI_ID
@@ -113,6 +124,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         saveButton = findViewById(R.id.anthropometrySave);
         heightGraph = findViewById(R.id.heightforageAnthropometry);
         weightGraph = findViewById(R.id.weightforageAnthropometry);
+        weightForHeightGraph = findViewById(R.id.weightforheightAnthropometry);
         AgeInWeeksTxt = findViewById(R.id.ageInWeeks);
         plotGraphButton = findViewById(R.id.plotGraph);
 
@@ -142,6 +154,14 @@ public class AnthropometryActivityNew extends AppCompatActivity {
 
         heightValues = new HashMap<>();
         weightValues = new HashMap<>();
+
+        //weight for height
+        weightForHeightValues0to2 = new HashMap<>();
+        weightForHeightValues2to5 = new HashMap<>();
+
+
+        currentAge = 0;
+
         selectDataSets();
 
 
@@ -205,7 +225,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             heightTxt.setText(getDataElement("cDXlUgg1WiZ"));
             weightTxt.setText(getDataElement("rBRI27lvfY5"));
 
-            String Currentweight;
+
             if (weightTxt.getText().toString().isEmpty()) {
                 Currentweight = "";
             } else {
@@ -344,7 +364,6 @@ public class AnthropometryActivityNew extends AppCompatActivity {
 
     private void ChangeColor(EditText text, String s,
                              Map<Integer, double[]> data, boolean height) {
-        int currentAge = 0;
         if(!AgeInWeeksTxt.getText().toString().isEmpty() &&
                 !AgeInWeeksTxt.getText().toString().equals("Age in weeks"))
             currentAge = Integer.parseInt(AgeInWeeksTxt.getText().toString());
@@ -444,6 +463,13 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             d.initializeweightForAgeBoys();
             heightDataWHO = d.getHeightForAgeBoys();
             weightDataWHO = d.getWeightForAgeBoys();
+
+            if (currentAge < 96){
+                d.initializewe();
+                d.initializeweightForAgeBoys();
+                heightDataWHO = d.getHeightForAgeBoys();
+                weightDataWHO = d.getWeightForAgeBoys();
+            }
         }else
         {
             d.initializeweightForAgeGirls();
