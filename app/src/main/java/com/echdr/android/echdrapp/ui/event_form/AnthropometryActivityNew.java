@@ -60,6 +60,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
     private FormType formType;
     private GraphView heightGraph;
     private GraphView weightGraph;
+    private GraphView weightForHeightGraph;
     private String selectedChild;
     private String sex;
     private TextView textView_Date;
@@ -75,11 +76,21 @@ public class AnthropometryActivityNew extends AppCompatActivity {
     private Button plotGraphButton;
     private TrackedEntityAttributeValue birthday;
 
+    private int currentAge;
+    private String Currentweight;
+
     Map<Integer, Integer> heightValues;
     Map<Integer, Integer> weightValues;
 
     Map<Integer, double[]> heightDataWHO;
     Map<Integer, double[]> weightDataWHO;
+
+    //weight for height
+    Map<Number, Integer> weightForHeightValues0to2;
+    Map<Number, Integer> weightForHeightValues2to5;
+
+    Map<Number, double[]> weightForHeight0to2DataWHO;
+    Map<Number, double[]> weightForHeight2to5DataWHO;
 
     private enum IntentExtra {
         EVENT_UID, PROGRAM_UID, OU_UID, TYPE, TEI_ID
@@ -113,6 +124,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         saveButton = findViewById(R.id.anthropometrySave);
         heightGraph = findViewById(R.id.heightforageAnthropometry);
         weightGraph = findViewById(R.id.weightforageAnthropometry);
+        weightForHeightGraph = findViewById(R.id.weightforheightAnthropometry);
         AgeInWeeksTxt = findViewById(R.id.ageInWeeks);
         plotGraphButton = findViewById(R.id.plotGraph);
 
@@ -142,6 +154,12 @@ public class AnthropometryActivityNew extends AppCompatActivity {
 
         heightValues = new HashMap<>();
         weightValues = new HashMap<>();
+
+        //weight for height
+        weightForHeightValues0to2 = new HashMap<>();
+        weightForHeightValues2to5 = new HashMap<>();
+
+        currentAge = 0;
         selectDataSets();
 
 
@@ -205,7 +223,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             heightTxt.setText(getDataElement("cDXlUgg1WiZ"));
             weightTxt.setText(getDataElement("rBRI27lvfY5"));
 
-            String Currentweight;
+
             if (weightTxt.getText().toString().isEmpty()) {
                 Currentweight = "";
             } else {
@@ -344,7 +362,6 @@ public class AnthropometryActivityNew extends AppCompatActivity {
 
     private void ChangeColor(EditText text, String s,
                              Map<Integer, double[]> data, boolean height) {
-        int currentAge = 0;
         if(!AgeInWeeksTxt.getText().toString().isEmpty() &&
                 !AgeInWeeksTxt.getText().toString().equals("Age in weeks"))
             currentAge = Integer.parseInt(AgeInWeeksTxt.getText().toString());
@@ -444,12 +461,31 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             d.initializeweightForAgeBoys();
             heightDataWHO = d.getHeightForAgeBoys();
             weightDataWHO = d.getWeightForAgeBoys();
+
+            if (currentAge < 96){
+                d.initializweightForHeightBoys0To2();
+                weightForHeight0to2DataWHO = d.getWeightForHeightBoys0to2();
+            }
+            else{
+                d.initializweightForHeightBoys2To5();
+                weightForHeight2to5DataWHO = d.getWeightForHeightBoys2to5();
+            }
+
         }else
         {
             d.initializeweightForAgeGirls();
             d.initializeheightForAgeGirls();
             heightDataWHO = d.getHeightForAgeGirls();
             weightDataWHO = d.getWeightForAgeGirls();
+
+            if (currentAge < 96){
+                d.initializweightForHeightGirls0to2();
+                weightForHeight0to2DataWHO = d.getWeightForHeightGirls0to2();
+            }
+            else{
+                d.initializweightForHeightGirls2to5();
+                weightForHeight2to5DataWHO = d.getWeightForHeightGirls2to5();
+            }
 
         }
 
@@ -465,18 +501,33 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             for (int i = 3; i > -1; i--) {
                 heightGraph.addSeries(d.heightForAgeBoysValues(i, 60));
                 weightGraph.addSeries(d.weightForAgeBoys(i, 60));
+                if (currentAge < 96){
+                    weightForHeightGraph.addSeries(d.weightForHeightBoys0to2(i,60));
+                }
+                else{
+                    weightForHeightGraph.addSeries(d.weightForHeightBoys2to5(i,60));
+                }
             }
+
 
         } else {
             for (int i = 3; i > -1; i--) {
                 heightGraph.addSeries(d.heightForAgeGirlsValues(i, 60));
                 weightGraph.addSeries(d.weightForAgeGirlsValues(i, 60));
+                if (currentAge < 96){
+                    weightForHeightGraph.addSeries(d.weightForHeightGirls0to2(i,60));
+                }
+                else{
+                    weightForHeightGraph.addSeries(d.weightForHeightGirls2to5(i,60));
+                }
             }
 
         }
 
         heightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
         weightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
+        weightForHeightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
+
 
         heightGraph.getViewport().setMaxX(60);
         heightGraph.getViewport().setMaxY(130);
@@ -484,17 +535,26 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         weightGraph.getViewport().setMaxX(60);
         weightGraph.getViewport().setMaxY(30);
 
+        weightForHeightGraph.getViewport().setMaxX(60);
+        weightForHeightGraph.getViewport().setMaxY(30);
+
         // don't show anomalies ( might be redundant when zooming is enabled)
         weightGraph.getViewport().setYAxisBoundsManual(true);
         heightGraph.getViewport().setYAxisBoundsManual(true);
         weightGraph.getViewport().setXAxisBoundsManual(true);
         heightGraph.getViewport().setXAxisBoundsManual(true);
 
+        weightForHeightGraph.getViewport().setYAxisBoundsManual(true);
+        weightForHeightGraph.getViewport().setXAxisBoundsManual(true);
+
         // enable zooming
         weightGraph.getViewport().setScalable(true);
         heightGraph.getViewport().setScalable(true);
         weightGraph.getViewport().setScalableY(true);
         heightGraph.getViewport().setScalableY(true);
+
+        weightForHeightGraph.getViewport().setScalable(true);
+        weightForHeightGraph.getViewport().setScalableY(true);
 
 
     }
