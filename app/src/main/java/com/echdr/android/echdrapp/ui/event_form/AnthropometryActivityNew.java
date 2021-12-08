@@ -86,11 +86,11 @@ public class AnthropometryActivityNew extends AppCompatActivity {
     Map<Integer, double[]> weightDataWHO;
 
     //weight for height
-    Map<Integer, Integer> weightForHeightValues0to2;
-    Map<Integer, Integer> weightForHeightValues2to5;
+    Map<Number, Integer> weightForHeightValues0to2;
+    Map<Number, Integer> weightForHeightValues2to5;
 
-    Map<Integer, double[]> weightForHeight0to2DataWHO;
-    Map<Integer, double[]> weightForHeight2to5DataWHO;
+    Map<Number, double[]> weightForHeight0to2DataWHO;
+    Map<Number, double[]> weightForHeight2to5DataWHO;
 
     private enum IntentExtra {
         EVENT_UID, PROGRAM_UID, OU_UID, TYPE, TEI_ID
@@ -159,9 +159,7 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         weightForHeightValues0to2 = new HashMap<>();
         weightForHeightValues2to5 = new HashMap<>();
 
-
         currentAge = 0;
-
         selectDataSets();
 
 
@@ -465,17 +463,29 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             weightDataWHO = d.getWeightForAgeBoys();
 
             if (currentAge < 96){
-                d.initializewe();
-                d.initializeweightForAgeBoys();
-                heightDataWHO = d.getHeightForAgeBoys();
-                weightDataWHO = d.getWeightForAgeBoys();
+                d.initializweightForHeightBoys0To2();
+                weightForHeight0to2DataWHO = d.getWeightForHeightBoys0to2();
             }
+            else{
+                d.initializweightForHeightBoys2To5();
+                weightForHeight2to5DataWHO = d.getWeightForHeightBoys2to5();
+            }
+
         }else
         {
             d.initializeweightForAgeGirls();
             d.initializeheightForAgeGirls();
             heightDataWHO = d.getHeightForAgeGirls();
             weightDataWHO = d.getWeightForAgeGirls();
+
+            if (currentAge < 96){
+                d.initializweightForHeightGirls0to2();
+                weightForHeight0to2DataWHO = d.getWeightForHeightGirls0to2();
+            }
+            else{
+                d.initializweightForHeightGirls2to5();
+                weightForHeight2to5DataWHO = d.getWeightForHeightGirls2to5();
+            }
 
         }
 
