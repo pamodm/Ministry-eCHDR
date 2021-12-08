@@ -501,18 +501,33 @@ public class AnthropometryActivityNew extends AppCompatActivity {
             for (int i = 3; i > -1; i--) {
                 heightGraph.addSeries(d.heightForAgeBoysValues(i, 60));
                 weightGraph.addSeries(d.weightForAgeBoys(i, 60));
+                if (currentAge < 96){
+                    weightForHeightGraph.addSeries(d.weightForHeightBoys0to2(i,60));
+                }
+                else{
+                    weightForHeightGraph.addSeries(d.weightForHeightBoys2to5(i,60));
+                }
             }
+
 
         } else {
             for (int i = 3; i > -1; i--) {
                 heightGraph.addSeries(d.heightForAgeGirlsValues(i, 60));
                 weightGraph.addSeries(d.weightForAgeGirlsValues(i, 60));
+                if (currentAge < 96){
+                    weightForHeightGraph.addSeries(d.weightForHeightGirls0to2(i,60));
+                }
+                else{
+                    weightForHeightGraph.addSeries(d.weightForHeightGirls2to5(i,60));
+                }
             }
 
         }
 
         heightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
         weightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
+        weightForHeightGraph.getViewport().setBackgroundColor(Color.rgb(215, 31, 226));
+
 
         heightGraph.getViewport().setMaxX(60);
         heightGraph.getViewport().setMaxY(130);
@@ -520,17 +535,26 @@ public class AnthropometryActivityNew extends AppCompatActivity {
         weightGraph.getViewport().setMaxX(60);
         weightGraph.getViewport().setMaxY(30);
 
+        weightForHeightGraph.getViewport().setMaxX(60);
+        weightForHeightGraph.getViewport().setMaxY(30);
+
         // don't show anomalies ( might be redundant when zooming is enabled)
         weightGraph.getViewport().setYAxisBoundsManual(true);
         heightGraph.getViewport().setYAxisBoundsManual(true);
         weightGraph.getViewport().setXAxisBoundsManual(true);
         heightGraph.getViewport().setXAxisBoundsManual(true);
 
+        weightForHeightGraph.getViewport().setYAxisBoundsManual(true);
+        weightForHeightGraph.getViewport().setXAxisBoundsManual(true);
+
         // enable zooming
         weightGraph.getViewport().setScalable(true);
         heightGraph.getViewport().setScalable(true);
         weightGraph.getViewport().setScalableY(true);
         heightGraph.getViewport().setScalableY(true);
+
+        weightForHeightGraph.getViewport().setScalable(true);
+        weightForHeightGraph.getViewport().setScalableY(true);
 
 
     }
