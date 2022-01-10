@@ -6,6 +6,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.ArrayAdapter;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.Nullable;
@@ -47,7 +48,9 @@ import org.hisp.dhis.android.core.program.ProgramStage;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.CompositeDisposable;
@@ -107,6 +110,19 @@ public class EventsActivity extends ListActivity {
         // Composite Disposable instance is required for creating new events in the
         // background
         compositeDisposable = new CompositeDisposable();
+
+        TextView titleLabel = findViewById(R.id.title);
+
+        Map<String, String> programStageNames = new HashMap<>();
+        programStageNames.put("hM6Yt9FQL0n", "Anthropometry Programme"); // age in months
+        programStageNames.put("iUgzznPsePB", "Other Health/Non Health Programme"); //
+        programStageNames.put("JsfNVX0hdq9", "Overweight / Obesity Programme");
+        programStageNames.put("lSSNwBMiwrK", "Stunting Programme");
+        programStageNames.put("tc6RsYbgGzm", "Supplementary feeding Programme");
+        programStageNames.put("CoGsKgEG4O0", "Therapeutic feeding Programme");
+
+
+        titleLabel.setText(programStageNames.get(selectedProgram));
 
         // populate the list view
         observeEvents();
@@ -510,10 +526,16 @@ public class EventsActivity extends ListActivity {
         EventCollectionRepository eventRepository = Sdk.d2().eventModule().events()
                 .withTrackedEntityDataValues().byTrackedEntityInstanceUids(j);
 
-        if (!isEmpty(selectedProgram)) {
+        // show all enrollment details in anthropometry
+        // in others only current enrollment
+        if (!isEmpty(selectedProgram) && selectedProgram.equals("hM6Yt9FQL0n")) {
+            System.out.println("Anthropometry");
+            return eventRepository.byProgramUid().eq(selectedProgram);
+        }else if(!isEmpty(selectedProgram)){
             return eventRepository.byProgramUid().eq(selectedProgram)
                     .byEnrollmentUid().eq(programEnrollmentID);
-        } else {
+        }
+        else {
             return eventRepository;
         }
     }
