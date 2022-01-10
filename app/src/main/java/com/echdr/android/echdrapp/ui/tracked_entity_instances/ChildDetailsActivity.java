@@ -166,8 +166,7 @@ public class ChildDetailsActivity extends ListActivity {
         stuntingNotEnrolled = findViewById(R.id.NotEnStunting);
 
         teiUid = getIntent().getStringExtra(IntentExtra.TRACKED_ENTITY_INSTANCE_UID.name());
-        //trackedEntityInstanceUid = getIntent().getStringExtra(IntentExtra.TRACKED_ENTITY_INSTANCE_UID.name());
-
+        trackedEntityInstanceUid = teiUid;
         //setting spinners
 
         ArrayAdapter<CharSequence> sexadapter = ArrayAdapter.createFromResource(context,

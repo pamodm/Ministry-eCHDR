@@ -127,42 +127,22 @@ public class EventsActivity extends ListActivity {
                     builderSingle.setIcon(R.drawable.baby_girl);
                     builderSingle.setTitle("Are you sure to un-enroll from Anthropometry Program");
 
+                    builderSingle.setMessage("This procedure will also un-enroll the child from " +
+                            "any other enrolled programs");
+
                     builderSingle.setNegativeButton("un-enroll", new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
 
                             // ToDo: Remove following enrollment ID section
                             //  pass the value from the previous intent.
+                            unenrollFromProgram("hM6Yt9FQL0n");
+                            unenrollFromProgram("iUgzznPsePB");
+                            unenrollFromProgram("JsfNVX0hdq9");
+                            unenrollFromProgram("lSSNwBMiwrK");
+                            unenrollFromProgram("tc6RsYbgGzm");
+                            unenrollFromProgram("CoGsKgEG4O0");
 
-                            // get anthropometry latest enrollment (descending order)
-                            List<Enrollment> AnthropometryStatus = Sdk.d2().enrollmentModule().enrollments()
-                                    .byTrackedEntityInstance().eq(selectedChild)
-                                    .byProgram().eq("hM6Yt9FQL0n")
-                                    .orderByCreated(RepositoryScope.OrderByDirection.DESC)
-                                    .blockingGet();
-
-                            String anthropometryEnrollmentID = "";
-
-                            // The child should have at least one enrollment
-                            if(!AnthropometryStatus.isEmpty())
-                            {
-                                anthropometryEnrollmentID = AnthropometryStatus.get(0).uid();
-                            }
-                            else
-                            {
-                                return;
-                            }
-
-                            // set the enrollment status based on the enrollment ID
-                            EnrollmentObjectRepository rep = Sdk.d2().enrollmentModule().enrollments()
-                                    .uid(anthropometryEnrollmentID);
-                            try {
-                                rep.setStatus(EnrollmentStatus.COMPLETED);
-                            } catch (D2Error d2Error) {
-                                d2Error.printStackTrace();
-                                Toast.makeText(context, "Un-enrolling unsuccessful",
-                                        Toast.LENGTH_LONG).show();
-                            }
 
                             dialog.dismiss();
 
@@ -552,6 +532,39 @@ public class EventsActivity extends ListActivity {
                     .byEnrollmentUid().eq(programEnrollmentID);
         } else {
             return eventRepository;
+        }
+    }
+
+    void unenrollFromProgram(String programID)
+    {
+        // get latest enrollment (descending order)
+        List<Enrollment> enrollmentStatus = Sdk.d2().enrollmentModule().enrollments()
+                .byTrackedEntityInstance().eq(selectedChild)
+                .byProgram().eq(programID)
+                .orderByCreated(RepositoryScope.OrderByDirection.DESC)
+                .blockingGet();
+
+        String enrollmentID = "";
+
+        // The child should have at least one enrollment
+        if(!enrollmentStatus.isEmpty())
+        {
+            enrollmentID = enrollmentStatus.get(0).uid();
+        }
+        else
+        {
+            return;
+        }
+
+        // set the enrollment status based on the enrollment ID
+        EnrollmentObjectRepository rep = Sdk.d2().enrollmentModule().enrollments()
+                .uid(enrollmentID);
+        try {
+            rep.setStatus(EnrollmentStatus.COMPLETED);
+        } catch (D2Error d2Error) {
+            d2Error.printStackTrace();
+            Toast.makeText(context, "Un-enrolling from unsuccessful",
+                    Toast.LENGTH_LONG).show();
         }
     }
 
