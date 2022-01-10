@@ -230,25 +230,12 @@ public class EventsActivity extends ListActivity {
                                     Sdk.d2().programModule().programs()
                                             .uid(selectedProgram).get()
                                             .map(program -> {
-                                                /*
-                                                String orgUnit = Sdk.d2().trackedEntityModule().trackedEntityInstances()
-                                                        .uid(selectedChild).blockingGet().organisationUnit();
-
-                                                 */
 
                                                 String orgUnit = Sdk.d2().organisationUnitModule().organisationUnits()
                                                         .byProgramUids(Collections.singletonList(selectedProgram))
                                                         .byOrganisationUnitScope(OrganisationUnit.Scope.SCOPE_DATA_CAPTURE)
                                                         .one().blockingGet().uid();
-                                                //System.out.println("org" + orgUnit);
-                                                /*
-                                                String enrollmentID = Sdk.d2().enrollmentModule().enrollments()
-                                                        .byProgram().eq(selectedProgram)
-                                                        .byTrackedEntityInstance().eq(selectedChild)
-                                                        //.byOrganisationUnit().eq(orgUnit)
-                                                        .one().blockingGet().uid();
 
-                                                 */
                                                 String enrollmentID = "";
                                                 List<Enrollment> enrollmentList = Sdk.d2().enrollmentModule().enrollments()
                                                         .byTrackedEntityInstance().eq(selectedChild)
@@ -519,11 +506,7 @@ public class EventsActivity extends ListActivity {
     private EventCollectionRepository getEventRepository() {
         List<String> j = new ArrayList<>();
         j.add(selectedChild);
-        /*
-        EventCollectionRepository eventRepository =
-                Sdk.d2().eventModule().events()
-                        .withTrackedEntityDataValues().byTrackedEntityInstanceUids(j);
-         */
+
         EventCollectionRepository eventRepository = Sdk.d2().eventModule().events()
                 .withTrackedEntityDataValues().byTrackedEntityInstanceUids(j);
 
