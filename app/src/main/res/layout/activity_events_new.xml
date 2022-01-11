@@ -38,6 +38,18 @@
             app:layout_constraintTop_toTopOf="parent">
 
         </ImageView>
+        <TextView
+            android:layout_height="wrap_content"
+            android:layout_width="match_parent"
+            android:layout_weight="0.05"
+            android:visibility="visible"
+            android:id="@+id/errorWarning"
+            android:text="Warning: Enrolled for the program twice"
+            android:textAlignment="center"
+            android:textSize="20sp"
+            android:textColor="@color/colorRed"
+            >
+        </TextView>
         <include layout="@layout/content_events"
             android:layout_width="match_parent"
             android:layout_height="0dp"

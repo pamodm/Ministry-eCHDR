@@ -9,8 +9,10 @@ import android.widget.ArrayAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AlertDialog;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.echdr.android.echdrapp.R;
 import com.echdr.android.echdrapp.data.Sdk;
@@ -40,6 +42,7 @@ import org.hisp.dhis.android.core.arch.repositories.scope.RepositoryScope;
 import org.hisp.dhis.android.core.enrollment.Enrollment;
 import org.hisp.dhis.android.core.enrollment.EnrollmentObjectRepository;
 import org.hisp.dhis.android.core.enrollment.EnrollmentStatus;
+import org.hisp.dhis.android.core.event.Event;
 import org.hisp.dhis.android.core.event.EventCollectionRepository;
 import org.hisp.dhis.android.core.event.EventCreateProjection;
 import org.hisp.dhis.android.core.maintenance.D2Error;
@@ -68,6 +71,7 @@ public class EventsActivity extends ListActivity {
     private String stageSelected;
     private FloatingActionButton anthUnenroll;
     private String programEnrollmentID;
+    private TextView errorWarning;
 
     private enum IntentExtra {
         PROGRAM, TEI_ID, ENROLLMENT_ID
@@ -112,6 +116,7 @@ public class EventsActivity extends ListActivity {
         compositeDisposable = new CompositeDisposable();
 
         TextView titleLabel = findViewById(R.id.title);
+        errorWarning = findViewById(R.id.errorWarning);
 
         Map<String, String> programStageNames = new HashMap<>();
         programStageNames.put("hM6Yt9FQL0n", "Anthropometry Programme"); // age in months
@@ -528,6 +533,13 @@ public class EventsActivity extends ListActivity {
                 }
 
         );
+        //countFirstStage();
+    }
+
+    @Override
+    protected void onResume() {
+        countFirstStage();
+        super.onResume();
     }
 
     /**
@@ -542,6 +554,13 @@ public class EventsActivity extends ListActivity {
             adapter.submitList(eventsPagedList);
             findViewById(R.id.eventsNotificator).setVisibility(
                     eventsPagedList.isEmpty() ? View.VISIBLE : View.GONE);
+        });
+
+        recyclerView.setRecyclerListener(new RecyclerView.RecyclerListener() {
+            @Override
+            public void onViewRecycled(@NonNull RecyclerView.ViewHolder holder) {
+                countFirstStage();
+            }
         });
     }
 
@@ -568,6 +587,54 @@ public class EventsActivity extends ListActivity {
         else {
             return eventRepository;
         }
+    }
+
+    private void countFirstStage(){
+
+        List<Event> eventLis = getEventRepository().blockingGet();
+        int eventCounter = 0;
+        String programStage = null;
+        for(int i=0; i<eventLis.size(); i++)
+        {
+            if(eventLis.get(i).programStage().equals("iWycCg6C2gd")||
+                    eventLis.get(i).programStage().equals("TC7YSoNEUag")||
+                        eventLis.get(i).programStage().equals("iEylwjAa5Cq")||
+                            eventLis.get(i).programStage().equals("KN0o3H6x8IH")||
+                                eventLis.get(i).programStage().equals("B8Jbdgg7Ut1"))
+            {
+                eventCounter++;
+                programStage = eventLis.get(i).programStage();
+            }
+
+        }
+        errorWarning.setVisibility(View.VISIBLE);
+
+        if(eventCounter > 1)
+        {
+            String message = "";
+            errorWarning.setVisibility(View.VISIBLE);
+            if(programStage.equals("iWycCg6C2gd"))
+            {
+                message += "The enrollment contains multiple Reason for enrollment events.";
+
+            }else if(programStage.equals("TC7YSoNEUag")|| programStage.equals("iEylwjAa5Cq")
+                    ||programStage.equals("B8Jbdgg7Ut1"))
+            {
+                message += "The enrollment contains multiple Management events.";
+            }
+            else if(programStage.equals("KN0o3H6x8IH"))
+            {
+                message += "The enrollment contains multiple Indication for Thriposha events.";
+            }
+            message += "\nA enrollment can have single management activity. Please delete others!";
+
+            errorWarning.setText(message);
+        }else
+        {
+            errorWarning.setVisibility(View.GONE);
+        }
+
+
     }
 
     boolean isActiveFromProgram(String programID)
