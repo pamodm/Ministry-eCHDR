@@ -143,30 +143,60 @@ public class EventsActivity extends ListActivity {
                     builderSingle.setIcon(R.drawable.baby_girl);
                     builderSingle.setTitle("Are you sure to un-enroll from Anthropometry Program");
 
-                    builderSingle.setMessage("This procedure will also un-enroll the child from " +
-                            "any other enrolled programs");
+                    String message = "This child have active enrollments in following programs.\n\n";
+                    int counter = 1;
 
-                    builderSingle.setNegativeButton("un-enroll", new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
+                    boolean atleastOne = false;
+                    if(isActiveFromProgram("iUgzznPsePB"))
+                    {
+                        atleastOne = true;
+                        message +=   "\t" + String.valueOf(counter++) +". Other Health/Non Health Programme\n";
+                    }
+                    if(isActiveFromProgram("JsfNVX0hdq9"))
+                    {
+                        atleastOne = true;
+                        message += "\t" + String.valueOf(counter++) + ". Overweight / Obesity Programme\n";
+                    }
+                    if(isActiveFromProgram("lSSNwBMiwrK"))
+                    {
+                        atleastOne = true;
+                        message += "\t" + String.valueOf(counter++) + ". Stunting Programme\n";
+                    }
+                    if(isActiveFromProgram("tc6RsYbgGzm"))
+                    {
+                        atleastOne = true;
+                        message += "\t" + String.valueOf(counter++) + ". Supplementary feeding Programme\n";
+                    }
+                    if(isActiveFromProgram("CoGsKgEG4O0"))
+                    {
+                        atleastOne = true;
+                        message += "\t" + String.valueOf(counter++) + ". Therapeutic feeding Programme\n";
+                    }
 
-                            // ToDo: Remove following enrollment ID section
-                            //  pass the value from the previous intent.
-                            unenrollFromProgram("hM6Yt9FQL0n");
-                            unenrollFromProgram("iUgzznPsePB");
-                            unenrollFromProgram("JsfNVX0hdq9");
-                            unenrollFromProgram("lSSNwBMiwrK");
-                            unenrollFromProgram("tc6RsYbgGzm");
-                            unenrollFromProgram("CoGsKgEG4O0");
+                    if(atleastOne)
+                    {
+                        message += "\nPlease un-enroll before proceeding.\n";
+                        builderSingle.setMessage(message);
+                    }
+                    else {
 
+                        builderSingle.setNegativeButton("un-enroll", new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                            dialog.dismiss();
+                                // ToDo: Remove following enrollment ID section
+                                //  pass the value from the previous intent.
 
-                            // once the enrollment is completed close the activity.
-                            finish();
-                            return;
-                        }
-                    });
+                                unenrollFromProgram("hM6Yt9FQL0n");
+
+                                dialog.dismiss();
+
+                                // once the enrollment is completed close the activity.
+                                finish();
+                                return;
+                            }
+                        });
+                    }
 
                     builderSingle.show();
 
@@ -540,6 +570,39 @@ public class EventsActivity extends ListActivity {
         }
     }
 
+    boolean isActiveFromProgram(String programID)
+    {
+        // get latest enrollment (descending order)
+        List<Enrollment> enrollmentStatus = Sdk.d2().enrollmentModule().enrollments()
+                .byTrackedEntityInstance().eq(selectedChild)
+                .byProgram().eq(programID)
+                .orderByCreated(RepositoryScope.OrderByDirection.DESC)
+                .blockingGet();
+
+        String enrollmentID = "";
+
+        // The child should have at least one enrollment
+        if(!enrollmentStatus.isEmpty())
+        {
+            enrollmentID = enrollmentStatus.get(0).uid();
+        }
+        else
+        {
+            return false;
+        }
+
+        Enrollment rep = Sdk.d2().enrollmentModule().enrollments()
+                .uid(enrollmentID).blockingGet();
+        if(rep.status().equals(EnrollmentStatus.ACTIVE))
+        {
+            return true;
+        }
+        else{
+            return false;
+        }
+
+    }
+
     void unenrollFromProgram(String programID)
     {
         // get latest enrollment (descending order)
@@ -560,17 +623,22 @@ public class EventsActivity extends ListActivity {
         {
             return;
         }
-
         // set the enrollment status based on the enrollment ID
+
         EnrollmentObjectRepository rep = Sdk.d2().enrollmentModule().enrollments()
                 .uid(enrollmentID);
         try {
             rep.setStatus(EnrollmentStatus.COMPLETED);
+            Toast.makeText(context, "Successfully un-enrolled",
+                    Toast.LENGTH_LONG).show();
+
         } catch (D2Error d2Error) {
             d2Error.printStackTrace();
             Toast.makeText(context, "Un-enrolling from unsuccessful",
                     Toast.LENGTH_LONG).show();
         }
+
+
     }
 
     @Override
